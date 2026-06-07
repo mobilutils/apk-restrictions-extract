@@ -54,14 +54,36 @@ cd -
 `main.sh` handles the full workflow: download the latest APK, extract it, and generate the restriction reports.
 
 ```bash
-./main.sh
+./main.sh --package-name <android.package.name>
+```
+
+All options:
+
+```bash
+./main.sh --package-name <android.package.name> \
+  [--subfolder <dir>] \
+  [--device-profile <path>] \
+  [--dispenser-url <url>]
+```
+
+| Flag | Required | Default | Description |
+|------|----------|---------|-------------|
+| `--package-name` | yes | — | Android package ID (e.g. `com.microsoft.emmx`) |
+| `--subfolder` | no | `Playstore-Downloads` | Output directory for downloaded APKs and extracted files |
+| `--device-profile` | no | — | Path to a gplaydl device profile (`.properties`) |
+| `--dispenser-url` | no | — | Aurora Store dispenser URL for auth |
+
+Example with a custom output directory:
+
+```bash
+./main.sh --package-name com.microsoft.office.outlook --subfolder "Playstore-Downloads/Outlook"
 ```
 
 ### Output
 
-After a successful run, folder `Playstore-Downloads` is created, 
-as well as a subfolder with name "<PACKAGE_NAME>_<VERSION>" (e.g: `com.samsung.android.knox.kpu_1.5.64 (26.05)`), 
-it contains:
+After a successful run, the output folder is created (default: `Playstore-Downloads`, configurable via `--subfolder`),
+along with a subfolder named `"<PACKAGE_NAME>_<VERSION>"` (e.g. `com.samsung.android.knox.kpu_1.5.64`),
+containing:
 
 - `app_restrictions.xml` — raw restriction definitions from the APK
 - `strings.xml` — resolved string resources
@@ -75,7 +97,7 @@ the whole idea is to run it daily and sync flat files listed above to a github d
 
 ```bash
 # Run every 2 days at 21:42
-42 21 */2 * * (cd /path/to/apk-restrictions-extract && /usr/bin/bash ./main.sh --package-name "com.samsung.android.knox.kpu" --device-profile ./myprofiles/20260606_Samsung_A346B.properties --dispenser "http://192.168.1.42:3000/api/auth")
+42 21 */2 * * (cd /path/to/apk-restrictions-extract && /usr/bin/bash ./main.sh --package-name "com.samsung.android.knox.kpu" --subfolder "Playstore-Downloads/Knox" --device-profile ./myprofiles/20260606_Samsung_A346B.properties --dispenser "http://192.168.1.42:3000/api/auth")
 ```
 
 ### Kudos
@@ -90,5 +112,12 @@ the whole idea is to run it daily and sync flat files listed above to a github d
 ### Monitor logs
 
 ```bash
-tail -f ~/logs/logs.txt
+# Main log (location depends on --subfolder, default: Playstore-Downloads/main.log)
+tail -f Playstore-Downloads/main.log
+
+# Extraction log (default: Playstore-Downloads/extract.log)
+tail -f Playstore-Downloads/extract.log
+
+# CSV run log (default: Playstore-Downloads/logs.txt)
+tail -f Playstore-Downloads/logs.txt
 ```
