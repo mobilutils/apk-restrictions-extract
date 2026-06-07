@@ -40,7 +40,7 @@ while [[ $# -gt 0 ]]; do
          --package-name)
             if [[ -z "${2:-}" ]]; then
                 log_error "--package-name requires a value."
-                log_error "Usage: bash main.sh --package-name <android.package.name> [--device-profile <path>] [--dispenser <url>]"
+                log_error "Usage: bash main.sh --package-name <android.package.name> [--device-profile <path>] [--dispenser-url <url>]"
                 exit 1
             fi
             PACKAGE_NAME="$2"
@@ -59,23 +59,23 @@ while [[ $# -gt 0 ]]; do
             DEVICE_PROFILE="$(cd "$(dirname "$2")" && pwd)/$(basename "$2")"
             shift 2
                 ;;
-            --dispenser)
+            --dispenser-url)
             if [[ -z "${2:-}" ]]; then
-                log_error "--dispenser requires a value."
-                log_error "Usage: bash main.sh --package-name <android.package.name> --dispenser <url>"
+                log_error "--dispenser-url requires a value."
+                log_error "Usage: bash main.sh --package-name <android.package.name> --dispenser-url <url>"
                 exit 1
             fi
             DISPENSER="$2"
             if ! [[ "$DISPENSER" =~ ^https?:// ]]; then
-                log_error "a URL must be provided to --dispenser, e.g: http://your-dispenser.com/api/auth"
+                log_error "a URL must be provided to --dispenser-url, e.g: http://your-dispenser.com/api/auth"
                 exit 1
             fi
             shift 2
                  ;;
          *)
-            log_error "Usage: bash main.sh --package-name <android.package.name> [--device-profile <path>] [--dispenser <url>]"
+            log_error "Usage: bash main.sh --package-name <android.package.name> [--device-profile <path>] [--dispenser-url <url>]"
             log_error "  e.g: bash main.sh --package-name com.microsoft.emmx"
-            log_error "  e.g: bash main.sh --package-name com.samsung.android.knox.kpu --device-profile dependency/gplaydl/gplaydl/profiles/D2.properties --dispenser http://192.168.1.42:3000/api/auth"
+            log_error "  e.g: bash main.sh --package-name com.samsung.android.knox.kpu --device-profile dependency/gplaydl/gplaydl/profiles/D2.properties --dispenser-url http://192.168.1.42:3000/api/auth"
             exit 1
              ;;
     esac
@@ -83,9 +83,9 @@ done
 
 if [[ -z "$PACKAGE_NAME" ]]; then
     log_error "--package-name argument is required."
-    log_error "Usage: bash main.sh --package-name <android.package.name> [--device-profile <path>] [--dispenser <url>]"
+    log_error "Usage: bash main.sh --package-name <android.package.name> [--device-profile <path>] [--dispenser-url <url>]"
     log_error "  e.g: bash main.sh --package-name com.microsoft.emmx"
-    log_error "  e.g: bash main.sh --package-name com.samsung.android.knox.kpu --device-profile dependency/gplaydl/gplaydl/profiles/D2.properties --dispenser http://192.168.1.42:3000/api/auth"
+    log_error "  e.g: bash main.sh --package-name com.samsung.android.knox.kpu --device-profile dependency/gplaydl/gplaydl/profiles/D2.properties --dispenser-url http://192.168.1.42:3000/api/auth"
     exit 1
 fi
 

@@ -23,6 +23,11 @@ _syslog() {
 log_info()   { _syslog "INFO"   "$@"; }
 log_warn()   { _syslog "WARN"   "$@"; }
 log_error() { _syslog "ERROR" "$@"; }
+die() {
+    log_error "$@"
+    rm -rf /tmp/decoded
+    exit 1
+}
 # ───────────────────────────────────────────────────────────────────────
 
 # Validate argument
@@ -109,8 +114,8 @@ log_info "Searching for restrictions tag..."
 RESTRICTIONS_FILE=$($GREP_CMD -rlPzo '<restrictions\s+xmlns:android="http://schemas.android.com/apk/res/android">');
 
 if [ -z "$RESTRICTIONS_FILE" ]; then
-    log_error "Could not find a file containing all three MDM restriction strings."
-    exit 1
+    die "Could not find a file containing restrictions."
+    exit 1;
 fi
 
 # Resolve to absolute path before changing directory
