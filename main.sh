@@ -10,6 +10,7 @@ export PYTHONPATH="${PYTHONPATH}:$(pwd)/dependency/gplaydl"
 MAIN_LOG="Playstore-Downloads/main.log"
 SCRIPT_NAME="$(basename "$0")"
 
+
 mkdir -p "Playstore-Downloads"
 
 _syslog() {
@@ -65,8 +66,12 @@ while [[ $# -gt 0 ]]; do
                 exit 1
             fi
             DISPENSER="$2"
+            if ! [[ "$DISPENSER" =~ ^https?:// ]]; then
+                log_error "a URL must be provided to --dispenser, e.g: http://your-dispenser.com/api/auth"
+                exit 1
+            fi
             shift 2
-                ;;
+                 ;;
          *)
             log_error "Usage: bash main.sh --package-name <android.package.name> [--device-profile <path>] [--dispenser <url>]"
             log_error "  e.g: bash main.sh --package-name com.microsoft.emmx"
@@ -96,6 +101,7 @@ START_DIR="$(pwd)"
 BASE_DIR="Playstore-Downloads"
 STATE_FILE="$BASE_DIR/.last_version"
 LOG_FILE="$BASE_DIR/logs.txt"
+PLAYDL_STDERR="$START_DIR/Playstore-Downloads/main_error.log"
 
 # Record start time
 START_EPOCH=$(date +%s)
@@ -135,19 +141,19 @@ else
     if [[ -n "$DEVICE_PROFILE" ]]; then
         log_info "Authenticating with device profile ${DEVICE_PROFILE}"
         log_info "Will exec: python -m gplaydl auth --profile \"$DEVICE_PROFILE\" --dispenser \"$DISPENSER\""
-        python -m gplaydl auth --profile "$DEVICE_PROFILE" --dispenser "$DISPENSER" 2>/dev/null || true
+        python -m gplaydl auth --profile "$DEVICE_PROFILE" --dispenser "$DISPENSER" 2>"$PLAYDL_STDERR" || true
     else
         log_info "Will exec: python -m gplaydl auth --dispenser \"$DISPENSER\""
-        python -m gplaydl auth --dispenser "$DISPENSER" 2>/dev/null || true
+        python -m gplaydl auth --dispenser "$DISPENSER" 2>"$PLAYDL_STDERR" || true
     fi
 
      # Download base APK + splits
     if [[ -n "$DEVICE_PROFILE" ]]; then
         log_info "Will exec:  python -m gplaydl download \"$PACKAGE_NAME\" -o . --no-extras --no-splits --profile \"$DEVICE_PROFILE\""
-        python -m gplaydl download "$PACKAGE_NAME" -o . --no-extras --no-splits --profile "$DEVICE_PROFILE" --dispenser "$DISPENSER"
+        python -m gplaydl download "$PACKAGE_NAME" -o . --no-extras --no-splits --profile "$DEVICE_PROFILE" --dispenser "$DISPENSER" 2>"$PLAYDL_STDERR" 
     else
-        log_info "Will exec:  python -m gplaydl download \"$PACKAGE_NAME\" -o . --no-extras --no-splits --dispenser \"$DISPENSER\""
-        python -m gplaydl download "$PACKAGE_NAME" -o . --no-extras --no-splits --dispenser "$DISPENSER"
+        log_info "Will exec:  python -m gplaydl download \"$PACKAGE_NAME\" -o . --no-extras --no-splits --dispenser \"$DISPENSER\"" 2>"$PLAYDL_STDERR" 
+        python -m gplaydl download "$PACKAGE_NAME" -o . --no-extras --no-splits --dispenser "$DISPENSER" 2>"$PLAYDL_STDERR"
     fi
     APK_FILE=$(ls *.apk 2>/dev/null | head -1)
     # 4. Extract restrictions.xml
