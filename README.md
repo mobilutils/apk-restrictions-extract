@@ -1,5 +1,6 @@
 ![lalinea book](lalineabook.jpg)
-<left><u><bold>Figure1</bold></u>: this persona is "Mr. Linea" created by Italian cartoonist Osvaldo Cavandoli ~1970. (this image has been misappropriated).</left>
+<bold>Figure1</bold>: this persona is "Mr. Linea" created by Italian cartoonist Osvaldo Cavandoli ~1970. (this image has been misappropriated).</left>
+
 # apk-restrictions-extract
 
 a project to easily keep track of MDM restrictions belonging to a specific android app, (usualy [app_restrictions.xml](https://developer.android.com/work/managed-configurations))
