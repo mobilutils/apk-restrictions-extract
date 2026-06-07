@@ -110,7 +110,8 @@ BASE_DIR="$SUBFOLDER"
 STATE_FILE="$BASE_DIR/.last_version"
 LOG_FILE="$BASE_DIR/logs.txt"
 #PLAYDL_STDERR="$START_DIR/$SUBFOLDER/main_error.log"
-PLAYDL_STDERR="$SUBFOLDER/main_error.log"
+#PLAYDL_STDERR="$SUBFOLDER/main_error.log"
+PLAYDL_STDERR=/dev/null
 
 # Record start time
 START_EPOCH=$(date +%s)
