@@ -1,5 +1,6 @@
 #run the following commands to get the modified version of gplaydl
-git clone git@github.com:mobilutils/gplaydl.git
+git clone -b feat/auth-by-profile https://github.com/mobilutils/gplaydl.git
 cd gplaydl
-git switch feat/auth-by-profile
-
+python3 -m venv mvenv
+source mvenv/bin/activate
+pip3 install .
