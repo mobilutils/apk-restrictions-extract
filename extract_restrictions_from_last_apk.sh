@@ -1,13 +1,11 @@
 #!/bin/bash
 # extract_restrictions_from_last_apk.sh
-# Usage: bash extract_restrictions_from_last_apk.sh <package-name>
+# Usage: bash extract_restrictions_from_last_apk.sh [--subfolder <dir>] <package-name>
 #   e.g: bash extract_restrictions_from_last_apk.sh com.microsoft.emmx
+#   e.g: bash extract_restrictions_from_last_apk.sh --subfolder my-downloads com.microsoft.emmx
 
 # ── Syslog-style logging ──────────────────────────────────────────────
-LOG_FILE="Playstore-Downloads/extract.log"
 SCRIPT_NAME="$(basename "$0")"
-
-mkdir -p "Playstore-Downloads"
 
 _syslog() {
     local level="$1"
@@ -31,12 +29,35 @@ die() {
 # ───────────────────────────────────────────────────────────────────────
 
 # Validate argument
-if [[ $# -lt 1 ]] || [[ -z "${1:-}" ]]; then
-    log_error "Usage: bash $(basename "$0") <package-name>"
+PACKAGE_NAME=""
+SUBFOLDER="Playstore-Downloads"
+while [[ $# -gt 0 ]]; do
+    case "$1" in
+        --subfolder)
+            if [[ -z "${2:-}" ]]; then
+                log_error "--subfolder requires a value."
+                log_error "Usage: bash $(basename "$0") --subfolder <dir> <package-name>"
+                exit 1
+            fi
+            SUBFOLDER="$2"
+            shift 2
+            ;;
+        *)
+            if [[ -z "$PACKAGE_NAME" ]]; then
+                PACKAGE_NAME="$1"
+            fi
+            shift
+            ;;
+    esac
+done
+
+if [[ -z "$PACKAGE_NAME" ]]; then
+    log_error "Usage: bash $(basename "$0") --subfolder <dir> <package-name>"
     exit 1
 fi
 
-PACKAGE_NAME="$1"
+mkdir -p "$SUBFOLDER"
+LOG_FILE="$SUBFOLDER/extract.log"
 
 log_info "Starting extraction for package: ${PACKAGE_NAME}"
 
@@ -64,12 +85,12 @@ fi
 # Capture script directory early (before any cd changes cwd)
 SCRIPT_DIR="$(pwd)"
 
-BASE_DIR="Playstore-Downloads"
+BASE_DIR="$SUBFOLDER"
 
 cd "$BASE_DIR"
 
 # Update LOG_FILE to absolute path after cd
-LOG_FILE="${SCRIPT_DIR}/Playstore-Downloads/extract.log"
+LOG_FILE="${SCRIPT_DIR}/$SUBFOLDER/extract.log"
 # Find the latest downloaded version directory
 # the below works like a charm for mac I need to propose a solution for linux as well
 #LATEST_DIR=$(find . -mindepth 1 -maxdepth 1 -type d -exec stat -f "%B %N" {} + | sort -rn | head -n 1 | cut -d' ' -f2-)

@@ -7,11 +7,9 @@ source mvenv/bin/activate
 export PYTHONPATH="${PYTHONPATH}:$(pwd)/dependency/gplaydl"
 
 # ── Syslog-style logging ──────────────────────────────────────────────
-MAIN_LOG="Playstore-Downloads/main.log"
+SUBFOLDER="Playstore-Downloads"
+MAIN_LOG="$SUBFOLDER/main.log"
 SCRIPT_NAME="$(basename "$0")"
-
-
-mkdir -p "Playstore-Downloads"
 
 _syslog() {
     local level="$1"
@@ -40,7 +38,7 @@ while [[ $# -gt 0 ]]; do
          --package-name)
             if [[ -z "${2:-}" ]]; then
                 log_error "--package-name requires a value."
-                log_error "Usage: bash main.sh --package-name <android.package.name> [--device-profile <path>] [--dispenser-url <url>]"
+                log_error "Usage: bash main.sh --package-name <android.package.name> [--subfolder <dir>] [--device-profile <path>] [--dispenser-url <url>]"
                 exit 1
             fi
             PACKAGE_NAME="$2"
@@ -49,7 +47,7 @@ while [[ $# -gt 0 ]]; do
            --device-profile)
             if [[ -z "${2:-}" ]]; then
                 log_error "--device-profile requires a value."
-                log_error "Usage: bash main.sh --package-name <android.package.name> --device-profile <path>"
+                log_error "Usage: bash main.sh --package-name <android.package.name> --subfolder <dir> --device-profile <path>"
                 exit 1
             fi
             if [[ ! -f "$2" ]]; then
@@ -59,6 +57,15 @@ while [[ $# -gt 0 ]]; do
             DEVICE_PROFILE="$(cd "$(dirname "$2")" && pwd)/$(basename "$2")"
             shift 2
                 ;;
+                --subfolder)
+            if [[ -z "${2:-}" ]]; then
+                log_error "--subfolder requires a value."
+                log_error "Usage: bash main.sh --package-name <android.package.name> --subfolder <dir>"
+                exit 1
+            fi
+            SUBFOLDER="$2"
+            shift 2
+                       ;;
             --dispenser-url)
             if [[ -z "${2:-}" ]]; then
                 log_error "--dispenser-url requires a value."
@@ -73,7 +80,7 @@ while [[ $# -gt 0 ]]; do
             shift 2
                  ;;
          *)
-            log_error "Usage: bash main.sh --package-name <android.package.name> [--device-profile <path>] [--dispenser-url <url>]"
+            log_error "Usage: bash main.sh --package-name <android.package.name> [--subfolder <dir>] [--device-profile <path>] [--dispenser-url <url>]"
             log_error "  e.g: bash main.sh --package-name com.microsoft.emmx"
             log_error "  e.g: bash main.sh --package-name com.samsung.android.knox.kpu --device-profile dependency/gplaydl/gplaydl/profiles/D2.properties --dispenser-url http://192.168.1.42:3000/api/auth"
             exit 1
@@ -83,11 +90,12 @@ done
 
 if [[ -z "$PACKAGE_NAME" ]]; then
     log_error "--package-name argument is required."
-    log_error "Usage: bash main.sh --package-name <android.package.name> [--device-profile <path>] [--dispenser-url <url>]"
+    log_error "Usage: bash main.sh --package-name <android.package.name> [--subfolder <dir>] [--device-profile <path>] [--dispenser-url <url>]"
     log_error "  e.g: bash main.sh --package-name com.microsoft.emmx"
     log_error "  e.g: bash main.sh --package-name com.samsung.android.knox.kpu --device-profile dependency/gplaydl/gplaydl/profiles/D2.properties --dispenser-url http://192.168.1.42:3000/api/auth"
     exit 1
 fi
+mkdir -p "$SUBFOLDER"
 
 log_info "Starting — package: ${PACKAGE_NAME}"
 if [[ -n "$DEVICE_PROFILE" ]]; then
@@ -98,10 +106,10 @@ if [[ -n "$DISPENSER" ]]; then
 fi
 
 START_DIR="$(pwd)"
-BASE_DIR="Playstore-Downloads"
+BASE_DIR="$SUBFOLDER"
 STATE_FILE="$BASE_DIR/.last_version"
 LOG_FILE="$BASE_DIR/logs.txt"
-PLAYDL_STDERR="$START_DIR/Playstore-Downloads/main_error.log"
+PLAYDL_STDERR="$START_DIR/$SUBFOLDER/main_error.log"
 
 # Record start time
 START_EPOCH=$(date +%s)
@@ -176,7 +184,7 @@ cd "$START_DIR"
 EXTRACTED=false
 if [[ ! -f "${TARGET_DIR}/app_restrictions.xml" ]] || [[ ! -f "${TARGET_DIR}/strings.xml" ]]; then
     log_info "Extracting restrictions from APK version ${CURRENT_VERSION}"
-    bash extract_restrictions_from_last_apk.sh ${PACKAGE_NAME} 2>/dev/null
+    bash extract_restrictions_from_last_apk.sh --subfolder "$SUBFOLDER" ${PACKAGE_NAME} 2>/dev/null
     EXTRACTED=true
 else
     log_info "app_restrictions.xml and strings.xml already exist — skipping extraction"
