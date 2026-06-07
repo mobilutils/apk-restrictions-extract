@@ -1,13 +1,17 @@
+![lalinea book](lalineabook.jpg)
+<left><u><bold>Figure1</bold></u>: this persona is "Mr. Linea" created by Italian cartoonist Osvaldo Cavandoli ~1970. (this image has been misappropriated).</left>
 # apk-restrictions-extract
 
-a project to easily keep track of restrictions belonging to a specific android app and keep track of it.
+a project to easily keep track of MDM restrictions belonging to a specific android app, (usualy [app_restrictions.xml](https://developer.android.com/work/managed-configurations))
 
-Useful to monitor restrictions file evolution of an app
-Extract, consolidate and  track version MDM restrictions from APK files
 
-Downloads the latest APK of the app you are interested in, decompiles it, and produces a consolidated CSV/JSON of all available MDM policies.
+Useful to monitor specific app MDM restructions evolution of an app,
+this project 
+- Downloads the latest APK of the app you are interested in, 
+- decompiles it via `apktool`, 
+- produces a consolidated CSV/JSON of all available MDM policies.
 
-If you intend to use it as is, it's fine to test quickly, but you MUST really consider running a dispenser aside, if you want me to I can add a bash script to install and launch one in a subfolder.
+/!\ If you intend to use it as is, it's fine to test quickly, but you MUST really consider running a dispenser aside, if you want me to I can add a bash script to install and launch one in a subfolder.
 
 ## Install dependencies
 
