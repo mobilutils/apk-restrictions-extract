@@ -1,7 +1,7 @@
 #!/bin/bash
 # main.sh
 
-source mvenv/bin/activate
+source dependency/mvenv/bin/activate
 
 # Use local gplaydl from dependency/
 export PYTHONPATH="${PYTHONPATH}:$(pwd)/dependency/gplaydl"
@@ -109,7 +109,8 @@ START_DIR="$(pwd)"
 BASE_DIR="$SUBFOLDER"
 STATE_FILE="$BASE_DIR/.last_version"
 LOG_FILE="$BASE_DIR/logs.txt"
-PLAYDL_STDERR="$START_DIR/$SUBFOLDER/main_error.log"
+#PLAYDL_STDERR="$START_DIR/$SUBFOLDER/main_error.log"
+PLAYDL_STDERR="$SUBFOLDER/main_error.log"
 
 # Record start time
 START_EPOCH=$(date +%s)

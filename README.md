@@ -36,13 +36,14 @@ brew upadte && brew upgrade && brew install apktool python3
 ### Common Nux/MacOsx
 ```bash
 
+cd dependency
 python3 -m venv mvenv
-source mvenv/bin/activate
+#source mvenv/bin/activate
+source dependency/mvenv/bin/activate
 
 #while waiting for author of gplaydl to include my PR (https://github.com/rehmatworks/gplaydl/pull/48)
 pip install google-play-scraper
 
-cd dependency
 ./dl-modified-gplaydl.sh
 cd -
 ```
