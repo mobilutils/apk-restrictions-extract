@@ -1,5 +1,5 @@
 ![lalinea book](lalineabook.jpg)
-<bold>Figure1</bold>: this persona is "Mr. Linea" created by Italian cartoonist Osvaldo Cavandoli ~1970. (this image has been misappropriated).</left>
+this persona is "Mr. Linea" created by Italian cartoonist Osvaldo Cavandoli ~1970.
 
 # apk-restrictions-extract
 
